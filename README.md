@@ -11,22 +11,33 @@ Des armes différente : Arc (Ajoute de la portée d'attaque), Masse (ajoute des 
 
 
 
-Différentes stats :
+Différentes stats physique (max point 60) :
 
 Vitesse (Mouvement speed)
 Force (Ajout des dégat avec Epée, Hache)
 Dexterité (Ajout des dégat avec Arc, Lance)
 Agilité (Chance d'esquive)
-Endurance ? (Vitesse d'attaque)
+Endurance (Vitesse d'attaque)
+Courage (Courage du guerrier)
 
 Différentes armes :
 
 Epée
 Hache
-Arc
+Arc (Guerrier attaque. Si un ennemi est trop pres, la peur augmente énormement)
 Lance
 
 Bonus bouclier ou non sur Hache, Epée et Lance
+
+Stat de peur.
+Plus il y a d'ennemi proche du guerrier, plus sa peur augmente.
+Si le guerrier a une arme en defaveur  des ennemis autour sa peur augmente
+Si l'ennemi a un bouclier sa peur augmente
+Moins il a de pv, plus la peur augmente
+
+Si la peur depasse le courage, le guerrier se met à fuir et s'éloigne de tout ses ennemis à portés.
+Sinon, il attaque l'ennemi le plus proche
+
 
 
 Todo : 

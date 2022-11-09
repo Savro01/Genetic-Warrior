@@ -13,21 +13,12 @@ public class WarriorBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        getEnnemyList();
-        Debug.Log(listEnnemy[Random.Range(0,100)]);
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
-    }
-
-    void getEnnemyList()
-    {
-        foreach (Transform child in transform.parent.transform)
-        {
-            listEnnemy.Add(child.gameObject);
-        }
     }
 }
