@@ -31,7 +31,7 @@ Lance
 Bonus bouclier ou non sur Hache, Epée et Lance
 
 Stat de peur.
-Plus il y a d'ennemi proche du guerrier, plus sa peur augmente.
+Plus il y a d'ennemi proche du guerrier, plus sa peur augmente
 Si le guerrier a une arme en defaveur  des ennemis autour sa peur augmente
 Si l'ennemi a un bouclier sa peur augmente
 Moins il a de pv, plus la peur augmente
