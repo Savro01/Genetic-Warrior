@@ -11,14 +11,15 @@ Des armes différente : Arc (Ajoute de la portée d'attaque), Masse (ajoute des 
 
 
 
-Différentes stats physique (max point 60) :
+Différentes stats physique (max point 50) :
 
 Vitesse (Mouvement speed)
-Force (Ajout des dégat avec Epée, Hache)
 Dexterité (Ajout des dégat avec Arc, Lance)
 Agilité (Chance d'esquive)
+Force (Ajout des dégat avec Epée, Hache)
 Endurance (Vitesse d'attaque)
-Courage (Courage du guerrier)
+
+Courage (Courage du guerrier)(Indépendant)
 
 Différentes armes :
 

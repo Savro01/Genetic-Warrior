@@ -5,6 +5,8 @@ using UnityEngine;
 public class WarriorLoad : MonoBehaviour
 {
     public float nbWarriorInit;
+    public GameObject warriorPrefab;
+
     List<GameObject> listWarrior = new List<GameObject>();
 
     // Start is called before the first frame update
@@ -26,13 +28,12 @@ public class WarriorLoad : MonoBehaviour
         float dist = 100; //Commenter cette ligne si génération random
         for (int i = 0; i < nbWarriorInit; i++)
         {
-           // Vector2 posWarriorAnnulus = RandomPointInAnnulus(origin, 5, 105); //Commenter cette ligne si génération circulaire
-            GameObject warrior = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            // Vector2 posWarriorAnnulus = RandomPointInAnnulus(origin, 5, 105); //Commenter cette ligne si génération circulaire
+            GameObject warrior = Instantiate(warriorPrefab);
             warrior.transform.parent = transform;
             warrior.name = warrior.name + i;
             warrior.transform.position = new Vector3(dist * Mathf.Cos(angleSpawn * i / (180f / Mathf.PI)), 1, dist * Mathf.Sin(angleSpawn * i / (180f / Mathf.PI))); //Commenter cette ligne si génération random
            // warrior.transform.position = new Vector3(posWarriorAnnulus.x, 1, posWarriorAnnulus.y); //Commenter cette ligne si génération circulaire
-            warrior.AddComponent<WarriorBehaviour>();
             listWarrior.Add(warrior);
         }
     }
