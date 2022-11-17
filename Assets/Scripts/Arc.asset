@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Arc
   m_EditorClassIdentifier: 
   name: Arc
-  coolDown: 3
-  degat: 10
-  portee: 10
+  coolDown: 2
+  degat: 2
+  portee: 20
   weaponCounter: Lance

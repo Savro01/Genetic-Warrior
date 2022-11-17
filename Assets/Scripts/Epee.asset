@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Epee
   coolDown: 1
-  degat: 10
-  portee: 10
+  degat: 2
+  portee: 2
   weaponCounter: Arc

@@ -76,8 +76,8 @@ public class WarriorBehaviour : MonoBehaviour
         int nbEnnemyNearby = listNearEnnemy.Count;
         for(int i = 0; i < nbEnnemyNearby; i++)
         {
-            //L'ennemi a une arme efficace contre l'arme du guerrier
             WarriorBehaviour ennemyBehaviour = listNearEnnemy[i].GetComponent<WarriorBehaviour>();
+            //L'ennemi a une arme efficace contre l'arme du guerrier
             if (ennemyBehaviour.weapon.name == weapon.weaponCounter)
                 peurCalcul += 2;
             //L'ennemi a un bouclier
@@ -108,24 +108,43 @@ public class WarriorBehaviour : MonoBehaviour
             //Get nearbiest ennemy
             targetWarrior = NearbiestEnnemy();
 
-            //Move to him
-            var step = warrioStats[0] * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, targetWarrior.transform.position, step);
-
-            //Si ennemie à portée
-            if (timeLeftForAttack <= 0)
+            //Si l'ennemie est hors de portée, le guerrier se déplace vers lui
+            if(Vector3.Distance(targetWarrior.transform.position, transform.position) > weapon.portee)
             {
-                //Attaque
-                timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4] * 2 / 100) * weapon.coolDown;
+                //Move to him
+                var step = warrioStats[0] * Time.deltaTime;
+                transform.position = Vector3.MoveTowards(transform.position, targetWarrior.transform.position, step);
+            }
+            //Si il est à portée, il l'attaque
+            else
+            {
+                //Si l'attaque du guerrier n'est pas en cooldown
+                if (timeLeftForAttack <= 0)
+                {
+                    targetWarrior.GetComponent<WarriorBehaviour>().ReceptionDégat(weapon.degat);
+                    timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4] * 2 / 100) * weapon.coolDown;
+                }
             }
         }
     }
 
     //Methode qui gére les dégat recus par le guerrier
-    void ReceptionDégat(int degatWeapon)
+    public void ReceptionDégat(int degatWeapon)
     {
+        pv -= degatWeapon;
         if (pv <= 0)
-            Destroy(this);
+        {
+            for(int i = 0; i < listNearEnnemy.Count; i++)
+            {
+                listNearEnnemy[i].GetComponent<WarriorBehaviour>().ImDead(this.gameObject);
+            }
+            Destroy(this.gameObject);
+        }
+    }
+
+    public void ImDead(GameObject ennemyDead)
+    {
+        listNearEnnemy.Remove(ennemyDead);
     }
 
     GameObject NearbiestEnnemy()

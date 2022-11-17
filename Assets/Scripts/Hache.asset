@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Hache
   coolDown: 3
-  degat: 10
-  portee: 10
+  degat: 4
+  portee: 2
   weaponCounter: Epee
