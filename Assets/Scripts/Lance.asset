@@ -16,4 +16,4 @@ MonoBehaviour:
   coolDown: 4
   degat: 10
   portee: 10
-  weaponCounter: t
+  weaponCounter: Hache

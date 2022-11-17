@@ -9,7 +9,7 @@ public class WarriorBehaviour : MonoBehaviour
 
     //Stats non visible du guerrier
     int pv = 20;
-    int peur = 0;
+    public int peur;
     float timeLeftForAttack = 0;
 
     //Liste des ennemis aux alentours
@@ -21,6 +21,8 @@ public class WarriorBehaviour : MonoBehaviour
     Weapon weapon;
     //Bouclier ou non
     bool bouclier = false;
+    int bouclierDurability = 3;
+    bool lastHitBlocked = false;
 
     //Cible courante du guerrier
     GameObject targetWarrior;
@@ -40,17 +42,19 @@ public class WarriorBehaviour : MonoBehaviour
 
         int courageRng = Random.Range(1, 21);
         warrioStats[5] = courageRng;
-        Debug.Log("Stat du guerrier : " + warrioStats[0] + " " + warrioStats[1] + " " + warrioStats[2] + " " + warrioStats[3] + " " + warrioStats[4] + " " + warrioStats[5]);
+        //Debug.Log("Stat du guerrier : " + warrioStats[0] + " " + warrioStats[1] + " " + warrioStats[2] + " " + warrioStats[3] + " " + warrioStats[4] + " " + warrioStats[5]);
 
         //Choix de l'arme du guerrier
         weapon = possibleWeapon[Random.Range(0, 4)];
-        Debug.Log("Arme du guerrier : " + weapon.name);
+        //Debug.Log("Arme du guerrier : " + weapon.name);
 
         //Choix du bouclier ou non
         int bouclierRng = Random.Range(0, 2);
         if (weapon.name != "Arc" && bouclierRng == 0)
             bouclier = true;
         //Debug.Log("Le guerrier a un bouclier : " + bouclier);
+
+        //Debug.Log("Guerrier " + this.name + " de courage : " + warrioStats[5] + " posséde comme arme : " + weapon.name + " et a un bouclier : " + bouclier);
     }
 
     // Update is called once per frame
@@ -58,7 +62,7 @@ public class WarriorBehaviour : MonoBehaviour
     {
         timeLeftForAttack -= Time.deltaTime;
         peur = FearModifier();
-        if(peur > warrioStats[5])
+        if (peur > warrioStats[5])
             Fuite();
         else
             Attaque();
@@ -67,31 +71,27 @@ public class WarriorBehaviour : MonoBehaviour
     //Methode qui modifie la variable peur
     int FearModifier()
     {
-        int peurBouclier = 0;
-        int peurWeaponWeak = 0;
-        int pvLow = 0;
+        int peurCalcul = 0;
         //nombre d'ennemi autour du guerrier
         int nbEnnemyNearby = listNearEnnemy.Count;
         for(int i = 0; i < nbEnnemyNearby; i++)
         {
             //L'ennemi a une arme efficace contre l'arme du guerrier
             WarriorBehaviour ennemyBehaviour = listNearEnnemy[i].GetComponent<WarriorBehaviour>();
-           /* switch(weapon){
-                case "Epee":
-                    break;
-                case "Hache":
-                    break;
-                case "Arc":
-                    break;
-                case "Lance":
-                    break;
-            }*/
+            if (ennemyBehaviour.weapon.name == weapon.weaponCounter)
+                peurCalcul += 2;
             //L'ennemi a un bouclier
-            if (ennemyBehaviour.bouclier == true)
-                peurBouclier = 2;
-
+            if (ennemyBehaviour.bouclier == true && weapon.name != "Hache")
+                peurCalcul += 2;
+            if (bouclier && ennemyBehaviour.weapon.name == "Hache")
+                peurCalcul += 3;
         }
-        return 1;
+        //Les pv du guerrier sont low
+        if (pv < 5)
+            peurCalcul += 4;
+        else if (pv < 10)
+            peurCalcul += 2;
+        return nbEnnemyNearby + peurCalcul;
     }
 
     //methode qui simule le comportement du guerrier quand il fuit
@@ -102,13 +102,22 @@ public class WarriorBehaviour : MonoBehaviour
 
     //Methode qui simule le comportement du guerrier quand il attaque
     void Attaque()
-    {
-        //Si ennemie à portée
-        if(timeLeftForAttack <= 0)
+    {    
+        if (listNearEnnemy.Count != 0)
         {
-            //Attaque
-            timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4]*2 / 100) * weapon.coolDown;
-            Debug.Log(timeLeftForAttack);
+            //Get nearbiest ennemy
+            targetWarrior = NearbiestEnnemy();
+
+            //Move to him
+            var step = warrioStats[0] * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, targetWarrior.transform.position, step);
+
+            //Si ennemie à portée
+            if (timeLeftForAttack <= 0)
+            {
+                //Attaque
+                timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4] * 2 / 100) * weapon.coolDown;
+            }
         }
     }
 
@@ -117,6 +126,22 @@ public class WarriorBehaviour : MonoBehaviour
     {
         if (pv <= 0)
             Destroy(this);
+    }
+
+    GameObject NearbiestEnnemy()
+    {
+        GameObject nearbiestEnnemy = listNearEnnemy[0];
+        float lessDistance = Vector3.Distance(listNearEnnemy[0].transform.position, transform.position);
+        for (int i = 1; i < listNearEnnemy.Count; i++)
+        {
+            float distWithEnnemy = Vector3.Distance(listNearEnnemy[i].transform.position, transform.position);
+            if (distWithEnnemy < lessDistance)
+            {
+                lessDistance = distWithEnnemy;
+                nearbiestEnnemy = listNearEnnemy[i];
+            }
+        }
+        return nearbiestEnnemy;
     }
 
     //Si collision avec un autre GameObject, l'ajoute à la liste des ennemis proches
@@ -134,7 +159,7 @@ public class WarriorBehaviour : MonoBehaviour
     }
 
     //Affiche la liste des ennemis proche (par leur nom)
-    void afficheListNearEnnemy()
+    void AfficheListNearEnnemy()
     {
         for(int i = 0; i < listNearEnnemy.Count; i++)
             Debug.Log(listNearEnnemy[i].name);
