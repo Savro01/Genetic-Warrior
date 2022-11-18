@@ -8438,7 +8438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ba6de01e9deaac439a3fd06f19a5fc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nbWarriorInit: 100
+  nbWarriorInit: 20
   warriorPrefab: {fileID: 4842582044426118515, guid: 62b4897d67e4c2f4d88480bdad52cf7a, type: 3}
 --- !u!4 &1847712781
 Transform:

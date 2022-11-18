@@ -21,8 +21,18 @@ public class WarriorBehaviour : MonoBehaviour
     Weapon weapon;
     //Bouclier ou non
     bool bouclier = false;
-    int bouclierDurability = 3;
+    int bouclierDurability = 20;
     bool lastHitBlocked = false;
+
+    //Stats de debug A SUPPRIMER
+    public bool bouclieruser;
+    public int vitesse;
+    public int dexterite;
+    public int agilite;
+    public int force;
+    public int endurance;
+    public int courage;
+    public Weapon weaponUsed;
 
     //Cible courante du guerrier
     GameObject targetWarrior;
@@ -42,20 +52,24 @@ public class WarriorBehaviour : MonoBehaviour
 
         int courageRng = Random.Range(1, 21);
         warrioStats[5] = courageRng;
-        //Debug.Log("Stat du guerrier : " + warrioStats[0] + " " + warrioStats[1] + " " + warrioStats[2] + " " + warrioStats[3] + " " + warrioStats[4] + " " + warrioStats[5]);
 
         //Choix de l'arme du guerrier
         weapon = possibleWeapon[Random.Range(0, 4)];
-        //Debug.Log("Arme du guerrier : " + weapon.name);
 
         //Choix du bouclier ou non
         int bouclierRng = Random.Range(0, 2);
         if (weapon.name != "Arc" && bouclierRng == 0)
             bouclier = true;
-        //Debug.Log("Le guerrier a un bouclier : " + bouclier);
 
-        //Debug.Log("Guerrier " + this.name + " de courage : " + warrioStats[5] + " posséde comme arme : " + weapon.name + " et a un bouclier : " + bouclier);
-    }
+        bouclieruser = bouclier;
+        vitesse = warrioStats[0];
+        dexterite = warrioStats[1];
+        agilite = warrioStats[2];
+        force = warrioStats[3];
+        endurance = warrioStats[4];
+        courage = warrioStats[5];
+        weaponUsed = weapon;
+}
 
     // Update is called once per frame
     void Update()
@@ -82,7 +96,7 @@ public class WarriorBehaviour : MonoBehaviour
                 peurCalcul += 2;
             //L'ennemi a un bouclier
             if (ennemyBehaviour.bouclier == true && weapon.name != "Hache")
-                peurCalcul += 2;
+                peurCalcul += 3;
             if (bouclier && ennemyBehaviour.weapon.name == "Hache")
                 peurCalcul += 3;
         }
@@ -121,7 +135,7 @@ public class WarriorBehaviour : MonoBehaviour
                 //Si l'attaque du guerrier n'est pas en cooldown
                 if (timeLeftForAttack <= 0)
                 {
-                    targetWarrior.GetComponent<WarriorBehaviour>().ReceptionDégat(weapon.degat);
+                    targetWarrior.GetComponent<WarriorBehaviour>().ReceptionDégat(weapon.degat, weapon.name);
                     timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4] * 2 / 100) * weapon.coolDown;
                 }
             }
@@ -129,16 +143,32 @@ public class WarriorBehaviour : MonoBehaviour
     }
 
     //Methode qui gére les dégat recus par le guerrier
-    public void ReceptionDégat(int degatWeapon)
+    public void ReceptionDégat(int degatWeapon, string ennemyWeaponName)
     {
-        pv -= degatWeapon;
-        if (pv <= 0)
+        //Cas ou le guerrier a un bouclier
+        if (bouclier && !lastHitBlocked)
         {
-            for(int i = 0; i < listNearEnnemy.Count; i++)
+            Debug.Log("Attaque bloqué !");
+            if (ennemyWeaponName != "Hache")
+                bouclierDurability--;
+            else
+                bouclierDurability -= 3;
+            Debug.Log("Nouvelle durabilité : " + bouclierDurability);
+            lastHitBlocked = true;
+        }
+        else
+        {
+            Debug.Log(transform.name + " a recu un coup !");
+            lastHitBlocked = false;
+            pv -= degatWeapon;
+            if (pv <= 0)
             {
-                listNearEnnemy[i].GetComponent<WarriorBehaviour>().ImDead(this.gameObject);
+                for (int i = 0; i < listNearEnnemy.Count; i++)
+                {
+                    listNearEnnemy[i].GetComponent<WarriorBehaviour>().ImDead(this.gameObject);
+                }
+                Destroy(this.gameObject);
             }
-            Destroy(this.gameObject);
         }
     }
 
