@@ -81,6 +81,7 @@ public class WarriorBehaviour : MonoBehaviour
             Fuite();
         else
             Attaque();
+
     }
 
     //Methode qui modifie la variable peur
@@ -113,6 +114,20 @@ public class WarriorBehaviour : MonoBehaviour
     void Fuite()
     {
         //Penser a bloquer le guerrier dans la zone circulaire
+        if (listNearEnnemy.Count != 0)
+        {
+            //Récupére la position moyenne des ennemis proches
+            Vector3 positionMoyenneEnnemy = Vector3.zero;
+            for (int i = 0; i < listNearEnnemy.Count; i++)
+            {
+                positionMoyenneEnnemy += listNearEnnemy[i].transform.position;
+            }
+            positionMoyenneEnnemy /= listNearEnnemy.Count;
+            //positionMoyenneEnnemy *= 2;
+            //Escape them
+            var step = warrioStats[0] * Time.deltaTime;
+            transform.position = Vector3.MoveTowards(transform.position, transform.position + (transform.position-positionMoyenneEnnemy).normalized, step);
+        }
     }
 
     //Methode qui simule le comportement du guerrier quand il attaque
@@ -158,6 +173,8 @@ public class WarriorBehaviour : MonoBehaviour
                 bouclierDurability--;
             else
                 bouclierDurability -= 3;
+            if (bouclierDurability <= 0)
+                bouclier = false;
             lastHitBlocked = true;
         }
         else
@@ -220,5 +237,10 @@ public class WarriorBehaviour : MonoBehaviour
             Debug.Log(listNearEnnemy[i].name);
     }
 
- 
+    bool PointInsideSphere(Vector3 point, float radius)
+    {
+        Vector3 center = Vector3.zero;
+        return Vector3.Distance(point, center) < radius;
+    }
+
 }
