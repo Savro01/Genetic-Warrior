@@ -7,7 +7,7 @@ public class Weapon : ScriptableObject
 {
     public string name;
     public float coolDown;
-    public int degat;
+    public float degat;
     public int portee;
     public string weaponCounter;
 }

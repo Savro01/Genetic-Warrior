@@ -8,7 +8,7 @@ public class WarriorBehaviour : MonoBehaviour
     public List<Weapon> possibleWeapon = new List<Weapon>();
 
     //Stats non visible du guerrier
-    int pv = 20;
+    float pv = 20;
     public int peur;
     float timeLeftForAttack = 0;
 
@@ -76,7 +76,8 @@ public class WarriorBehaviour : MonoBehaviour
     {
         timeLeftForAttack -= Time.deltaTime;
         peur = FearModifier();
-        if (peur > warrioStats[5])
+        //Changer en warrioStats[5]
+        if (peur > courage)
             Fuite();
         else
             Attaque();
@@ -135,7 +136,12 @@ public class WarriorBehaviour : MonoBehaviour
                 //Si l'attaque du guerrier n'est pas en cooldown
                 if (timeLeftForAttack <= 0)
                 {
-                    targetWarrior.GetComponent<WarriorBehaviour>().ReceptionDégat(weapon.degat, weapon.name);
+                    float multiplicateurDamage = 0;
+                    if (weapon.name == "Epee" || weapon.name == "Hache")
+                        multiplicateurDamage = ((float)warrioStats[3] * 4 / 100) * weapon.degat;
+                    if (weapon.name == "Arc" || weapon.name == "Lance")
+                        multiplicateurDamage = ((float)warrioStats[1] * 4 / 100) * weapon.degat;
+                    targetWarrior.GetComponent<WarriorBehaviour>().ReceptionDégat(weapon.degat + multiplicateurDamage, weapon.name);
                     timeLeftForAttack = weapon.coolDown - ((float)warrioStats[4] * 2 / 100) * weapon.coolDown;
                 }
             }
@@ -143,31 +149,31 @@ public class WarriorBehaviour : MonoBehaviour
     }
 
     //Methode qui gére les dégat recus par le guerrier
-    public void ReceptionDégat(int degatWeapon, string ennemyWeaponName)
+    public void ReceptionDégat(float degatWeapon, string ennemyWeaponName)
     {
         //Cas ou le guerrier a un bouclier
         if (bouclier && !lastHitBlocked)
         {
-            Debug.Log("Attaque bloqué !");
             if (ennemyWeaponName != "Hache")
                 bouclierDurability--;
             else
                 bouclierDurability -= 3;
-            Debug.Log("Nouvelle durabilité : " + bouclierDurability);
             lastHitBlocked = true;
         }
         else
         {
-            Debug.Log(transform.name + " a recu un coup !");
-            lastHitBlocked = false;
-            pv -= degatWeapon;
-            if (pv <= 0)
+            int esquive = Random.Range(0, 100);
+            if (esquive > warrioStats[2]*2)
             {
-                for (int i = 0; i < listNearEnnemy.Count; i++)
+                pv -= degatWeapon;
+                if (pv <= 0)
                 {
-                    listNearEnnemy[i].GetComponent<WarriorBehaviour>().ImDead(this.gameObject);
+                    for (int i = 0; i < listNearEnnemy.Count; i++)
+                    {
+                        listNearEnnemy[i].GetComponent<WarriorBehaviour>().ImDead(this.gameObject);
+                    }
+                    Destroy(this.gameObject);
                 }
-                Destroy(this.gameObject);
             }
         }
     }
