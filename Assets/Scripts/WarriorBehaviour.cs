@@ -11,6 +11,8 @@ public class WarriorBehaviour : MonoBehaviour
     float pv = 20;
     public int peur;
     float timeLeftForAttack = 0;
+    float timeFeared = 10;
+    float timeRangeUp = 20;
 
     //Liste des ennemis aux alentours
     List<GameObject> listNearEnnemy = new List<GameObject>();
@@ -78,9 +80,12 @@ public class WarriorBehaviour : MonoBehaviour
     void Update()
     {
         timeLeftForAttack -= Time.deltaTime;
+        timeRangeUp -= Time.deltaTime;
+        if(timeRangeUp <= 0)
+            changeRangeOfCollider();
         peur = FearModifier();
         //Changer en warrioStats[5]
-        if (peur > courage)
+        if (peur > courage && timeFeared > 0)
             Fuite();
         else
             Attaque();
@@ -132,6 +137,7 @@ public class WarriorBehaviour : MonoBehaviour
             if (PointInsideSphere(transform.position + (transform.position - positionMoyenneEnnemy).normalized, 50))
                 goToCenter = false;
             //Escape them
+            timeFeared -= Time.deltaTime;
             var step = warrioStats[0] * Time.deltaTime;
             if(!goToCenter)
                 transform.position = Vector3.MoveTowards(transform.position, transform.position + (transform.position-positionMoyenneEnnemy).normalized, step);
@@ -257,4 +263,9 @@ public class WarriorBehaviour : MonoBehaviour
         return Vector3.Distance(point, center) < radius;
     }
 
+    void changeRangeOfCollider()
+    {
+        timeRangeUp = 40;
+        this.GetComponent<CapsuleCollider>().radius += 10;
+    }
 }
