@@ -37,6 +37,9 @@ public class WarriorBehaviour : MonoBehaviour
     //Cible courante du guerrier
     GameObject targetWarrior;
 
+    //
+    bool goToCenter = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -122,11 +125,20 @@ public class WarriorBehaviour : MonoBehaviour
             {
                 positionMoyenneEnnemy += listNearEnnemy[i].transform.position;
             }
+            //Gestion bordure
             positionMoyenneEnnemy /= listNearEnnemy.Count;
-            //positionMoyenneEnnemy *= 2;
+            if (!PointInsideSphere(transform.position + (transform.position - positionMoyenneEnnemy).normalized, 120))
+                goToCenter = true;
+            if (PointInsideSphere(transform.position + (transform.position - positionMoyenneEnnemy).normalized, 50))
+                goToCenter = false;
             //Escape them
             var step = warrioStats[0] * Time.deltaTime;
-            transform.position = Vector3.MoveTowards(transform.position, transform.position + (transform.position-positionMoyenneEnnemy).normalized, step);
+            if(!goToCenter)
+                transform.position = Vector3.MoveTowards(transform.position, transform.position + (transform.position-positionMoyenneEnnemy).normalized, step);
+            else
+                transform.position = Vector3.MoveTowards(transform.position, Vector3.zero, step);
+            if (transform.position.y != 0)
+                transform.position = new Vector3(transform.position.x, 0, transform.position.z);
         }
     }
 
@@ -144,6 +156,8 @@ public class WarriorBehaviour : MonoBehaviour
                 //Move to him
                 var step = warrioStats[0] * Time.deltaTime;
                 transform.position = Vector3.MoveTowards(transform.position, targetWarrior.transform.position, step);
+                if (transform.position.y != 0)
+                    transform.position = new Vector3(transform.position.x, 0, transform.position.z);
             }
             //Si il est à portée, il l'attaque
             else
