@@ -7,35 +7,77 @@ public class WarriorLoad : MonoBehaviour
     public float nbWarriorInit;
     public GameObject warriorPrefab;
 
-    List<GameObject> listWarrior = new List<GameObject>();
+    int nbGen = 100;
+
+    List<GameObject> listWarriorPostFight = new List<GameObject>();
+    List<GameObject> listWarriorGenSuiv = new List<GameObject>();
+    List<(int[], Weapon, bool)> listWarriorStatPostFight = new List<(int[], Weapon, bool)>();
 
     // Start is called before the first frame update
     void Start()
     {
-        Time.timeScale = 5f;
+        Time.timeScale = 10f;
         generateGen1();
+        nbGen--;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(this.transform.childCount == 10 && nbGen > 0)
+        {
+            Debug.Log("Nous avons des gagnants");
+            Time.timeScale = 0f;
+            getAllList();
+            croisement();
+            generateNGen();
+            nbGen--;
+           // Time.timeScale = 10f;
+        }
+        if (this.transform.childCount == 1 && nbGen <= 0)
+            Debug.Log("Recupere le dernier guerrier !");
     }
 
+    //Generate the first generation of the program
     void generateGen1()
     {
-        //Vector2 origin = new Vector2(0, 0); //Commenter cette ligne si génération circulaire
-        float angleSpawn = 360 / nbWarriorInit; //Commenter cette ligne si génération random
-        float dist = 100; //Commenter cette ligne si génération random
+        //Vector2 origin = new Vector2(0, 0); //Commenter cette ligne si gï¿½nï¿½ration circulaire
+        float angleSpawn = 360 / nbWarriorInit; //Commenter cette ligne si gï¿½nï¿½ration random
+        float dist = 100; //Commenter cette ligne si gï¿½nï¿½ration random
         for (int i = 0; i < nbWarriorInit; i++)
         {
-            // Vector2 posWarriorAnnulus = RandomPointInAnnulus(origin, 5, 105); //Commenter cette ligne si génération circulaire
+            // Vector2 posWarriorAnnulus = RandomPointInAnnulus(origin, 5, 105); //Commenter cette ligne si gï¿½nï¿½ration circulaire
             GameObject warrior = Instantiate(warriorPrefab);
             warrior.transform.parent = transform;
             warrior.name = warrior.name + i;
-            warrior.transform.position = new Vector3(dist * Mathf.Cos(angleSpawn * i / (180f / Mathf.PI)), 1, dist * Mathf.Sin(angleSpawn * i / (180f / Mathf.PI))); //Commenter cette ligne si génération random
-           // warrior.transform.position = new Vector3(posWarriorAnnulus.x, 1, posWarriorAnnulus.y); //Commenter cette ligne si génération circulaire
-            listWarrior.Add(warrior);
+            warrior.transform.position = new Vector3(dist * Mathf.Cos(angleSpawn * i / (180f / Mathf.PI)), 1, dist * Mathf.Sin(angleSpawn * i / (180f / Mathf.PI))); //Commenter cette ligne si gï¿½nï¿½ration random
+           // warrior.transform.position = new Vector3(posWarriorAnnulus.x, 1, posWarriorAnnulus.y); //Commenter cette ligne si gï¿½nï¿½ration circulaire
+        }
+    }
+
+    //Generate the n generation of the program
+    void generateNGen()
+    {
+
+    }
+
+    //Accouple la gÃ©nÃ©ration n de guerrier pour donner la gÃ©nÃ©ration n+1
+    void croisement()
+    {
+        
+
+    }
+
+    //RÃ©cupere les guerriers de la gÃ©nÃ©ration qui vient de combattre et met leurs stats dans une liste
+    void getAllList()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            int[] statsWarrior = transform.GetChild(i).GetComponent<WarriorBehaviour>().warrioStats;
+            Weapon weaponWarrior = transform.GetChild(i).GetComponent<WarriorBehaviour>().weapon;
+            bool bouclierWarrior = transform.GetChild(i).GetComponent<WarriorBehaviour>().bouclier;
+            listWarriorStatPostFight.Add((statsWarrior, weaponWarrior, bouclierWarrior));
+            Destroy(transform.GetChild(i).gameObject);
         }
     }
 

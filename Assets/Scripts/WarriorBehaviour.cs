@@ -18,11 +18,11 @@ public class WarriorBehaviour : MonoBehaviour
     List<GameObject> listNearEnnemy = new List<GameObject>();
 
     //Ensemble des stats dans l'ordre : Vitesse - Dexterité - Agilité - Force - Endurance - Courage
-    int[] warrioStats = new int[6];
+    public int[] warrioStats = new int[6];
     //Arme du guerrier
-    Weapon weapon;
+    public Weapon weapon;
     //Bouclier ou non
-    bool bouclier = false;
+    public bool bouclier = false;
     int bouclierDurability = 20;
     bool lastHitBlocked = false;
 
@@ -39,7 +39,7 @@ public class WarriorBehaviour : MonoBehaviour
     //Cible courante du guerrier
     GameObject targetWarrior;
 
-    //
+    //Bool pour empecher le guerrier de partir trop loin
     bool goToCenter = false;
 
     // Start is called before the first frame update
