@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class WarriorLoad : MonoBehaviour
 {
     public float nbWarriorInit;
     public GameObject warriorPrefab;
+
+    public Canvas canvas;
 
     int nbGen = 100;
 
@@ -25,7 +28,6 @@ public class WarriorLoad : MonoBehaviour
     {
         if(this.transform.childCount <= 10 && nbGen > 0)
         {
-            Debug.Log("Nous avons des gagnants");
             Time.timeScale = 0f;
             getSurvivingWarrior();
             croisement();
@@ -34,7 +36,7 @@ public class WarriorLoad : MonoBehaviour
             Time.timeScale = timeScaleAccelerator;
         }
         if (this.transform.childCount == 1 && nbGen <= 0)
-            Debug.Log("Recupere le dernier guerrier !");
+            AfficheLastSurvivor();
     }
 
     //Generate the first generation of the program
@@ -64,9 +66,6 @@ public class WarriorLoad : MonoBehaviour
             warrior.name = warrior.name + i;
             warrior.transform.position = new Vector3(dist * Mathf.Cos(angleSpawn * i / (180f / Mathf.PI)), 1, dist * Mathf.Sin(angleSpawn * i / (180f / Mathf.PI)));
             warrior.GetComponent<CapsuleCollider>().radius = 20;
-           /* Debug.Log(listWarriorNextFight[i].Item1[0] + " " + listWarriorNextFight[i].Item1[1] + " " + listWarriorNextFight[i].Item1[2] + " " + listWarriorNextFight[i].Item1[3] + " " + listWarriorNextFight[i].Item1[4] + " " + listWarriorNextFight[i].Item1[5]);
-            Debug.Log(listWarriorNextFight[i].Item2);
-            Debug.Log(listWarriorNextFight[i].Item3);*/
             warrior.GetComponent<WarriorBehaviour>().instantiateNextGen(listWarriorNextFight[i].Item1, listWarriorNextFight[i].Item2, listWarriorNextFight[i].Item3);
         }
         EmptyList();
@@ -130,9 +129,34 @@ public class WarriorLoad : MonoBehaviour
 
     void AfficheLastSurvivor()
     {
-        int width = Screen.width;
-        int height = Screen.height;
+        GameObject survivor = transform.GetChild(0).gameObject;
+        int[] statsWarrior = survivor.GetComponent<WarriorBehaviour>().warrioStats;
+        Weapon weaponWarrior = survivor.GetComponent<WarriorBehaviour>().weapon;
+        bool bouclierWarrior = survivor.GetComponent<WarriorBehaviour>().bouclier;
 
+        GameObject image = canvas.transform.GetChild(0).gameObject;
+
+        GameObject nameText = image.transform.GetChild(1).gameObject;
+        nameText.GetComponent<TextMeshProUGUI>().text = "Le guerrier s'appelle " + survivor.name;
+
+        GameObject weaponText = image.transform.GetChild(2).gameObject;
+        if(weaponWarrior.name != "Arc")
+            weaponText.GetComponent<TextMeshProUGUI>().text = "Il a comme arme une " + weaponWarrior.name;
+        else
+            weaponText.GetComponent<TextMeshProUGUI>().text = "Il a comme arme un " + weaponWarrior.name;
+
+
+        GameObject statsText = image.transform.GetChild(3).gameObject;
+        statsText.GetComponent<TextMeshProUGUI>().text = "Il a " + statsWarrior[0] + " de vitesse, " + statsWarrior[1] + " de dextérité, " + statsWarrior[2] + " d'agilité, " + statsWarrior[3] + " de force, " + statsWarrior[4] + " d'endurance et " + statsWarrior[5] + " de courage";
+
+        GameObject bouclierText = image.transform.GetChild(4).gameObject;
+        if(bouclierWarrior)
+            bouclierText.GetComponent<TextMeshProUGUI>().text = "Il a un bouclier";
+        else
+            bouclierText.GetComponent<TextMeshProUGUI>().text = "Il n'a pas de bouclier";
+
+        canvas.gameObject.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     public Vector2 RandomPointInAnnulus(Vector2 origin, float minRadius, float maxRadius)
