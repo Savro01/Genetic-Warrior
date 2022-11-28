@@ -26,16 +26,6 @@ public class WarriorBehaviour : MonoBehaviour
     int bouclierDurability = 20;
     bool lastHitBlocked = false;
 
-    //Stats de debug A SUPPRIMER
-    public bool bouclieruser;
-    public int vitesse;
-    public int dexterite;
-    public int agilite;
-    public int force;
-    public int endurance;
-    public int courage;
-    public Weapon weaponUsed;
-
     //Cible courante du guerrier
     GameObject targetWarrior;
 
@@ -44,6 +34,12 @@ public class WarriorBehaviour : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
+    {
+
+
+    }
+
+    public void instantiateFirstGen()
     {
         //Initialisation des stats du guerrier
         for (int i = 0; i < 5; i++)
@@ -65,16 +61,14 @@ public class WarriorBehaviour : MonoBehaviour
         int bouclierRng = Random.Range(0, 2);
         if (weapon.name != "Arc" && bouclierRng == 0)
             bouclier = true;
+    }
 
-        bouclieruser = bouclier;
-        vitesse = warrioStats[0];
-        dexterite = warrioStats[1];
-        agilite = warrioStats[2];
-        force = warrioStats[3];
-        endurance = warrioStats[4];
-        courage = warrioStats[5];
-        weaponUsed = weapon;
-}
+    public void instantiateNextGen(int[] warriorStatsConst, Weapon weaponConst, bool bouclierConst)
+    {
+        warrioStats = warriorStatsConst;
+        weapon = weaponConst;
+        bouclier = bouclierConst;
+    }
 
     // Update is called once per frame
     void Update()
@@ -85,7 +79,7 @@ public class WarriorBehaviour : MonoBehaviour
             changeRangeOfCollider();
         peur = FearModifier();
         //Changer en warrioStats[5]
-        if (peur > courage && timeFeared > 0)
+        if (peur > warrioStats[5] && timeFeared > 0)
             Fuite();
         else
             Attaque();
